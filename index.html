@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рулетка</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-200">  
+    <header class="text-slate-800 shadow-md mb-4 h-16 flex items-center justify-center text-3xl font-semibold bg-slate-100"><h1>Рулетка.online</h1></header>
+    <div class="page bg-slate-100 rounded-lg shadow-lg max-w-lg m-auto p-6">
+        <section class="description text-lg border-b-2 pb-2">
+            Наша рулетка - самое белое казино. Об этом свидетельствует дизайн сайта)
+        </section>
+
+        <section class="roulette flex justify-center">
+            <canvas id="roulette" width="500" height="500">В вашем браузере запрещено играть в рулетку!</canvas>
+        </section>
+    </div>
+
+    <script>
+        // Настройки
+        let wheelSize = 500;
+        let arcCount = 12;
+        let arc = 2 * Math.PI /  arcCount; // 2PI - единичная окр. Находим длину одной дуги сектора в радианах
+
+        let w;
+        let h;
+        let ctx;
+
+        const colors = [
+            "#B8D430", "#3AB745", "#029990", "#3501CB",
+            "#2E2C75", "#673A7E", "#CC0071", "#F80120",
+            "#F35B20", "#FB9A00", "#FFCC00", "#FEF200"
+        ];
+
+        const prizes = [
+            "Wendy's", "McDonalds", "Chick-fil-a", "Five Guys",
+            "Gold Star", "La Mexicana", "Chipotle", "Tazza Mia",
+            "Panera", "Just Crepes", "Arby's", "Indian"
+        ];
+
+        const drawRouletteWheel = () => {
+            const canvas = document.querySelector('#roulette');
+            h = canvas.height;
+            w = canvas.width;
+            ctx = canvas.getContext('2d');
+        
+            ctx = canvas.getContext("2d");
+            ctx.clearRect(0,0,w,h);
+   
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+
+            ctx.font = 'bold 18px Helvetica, Arial';
+        
+            for(let i = 0; i < arcCount; i++) {
+                let angle = i * arc; // Находим угол в радианах, на который нужно сдвинуть следующий сектор
+                ctx.fillStyle = colors[i]; // Выбираем цвет сектора
+                
+                ctx.beginPath();
+                ctx.arc(w/2, h/2, 200, angle, angle + arc, false);
+                ctx.lineTo(w/2, h/2);
+                ctx.stroke();
+                ctx.fill();
+
+                ctx.save();
+
+                ctx.shadowOffsetX = -1;
+                ctx.shadowOffsetY = -1;
+                ctx.shadowBlur    = 0;
+                ctx.shadowColor   = "rgb(220,220,220)";
+                ctx.fillStyle = "black";
+
+                ctx.translate(w/2, h/2); // Перемещаем центр координат в центр окружности
+
+                ctx.rotate(angle + arc/2); // Поворачиваем холст на угол, под которые наклонён сектр
+                let text = prizes[i]; // Выбираем текст сектора
+                ctx.textAlign = "right"; // Выравниваем текст по правому краю, чтобы отрисовывать его, начиная с края окружности
+                ctx.fillText(text, wheelSize/2 -80, 9); // Отрисовываем текст с отступом от края окружности
+
+                // ctx.translate(250 + Math.cos(angle + arc / 2) * 160,
+                //                 250 + Math.sin(angle + arc / 2) * 160);
+                //                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
+                // let text = prizes[i];
+                // ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+                ctx.restore();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            drawRouletteWheel();
+        });
+    </script>
+</body>
+</html>
