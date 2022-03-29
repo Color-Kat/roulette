@@ -15,14 +15,14 @@
             Наша рулетка - самое белое казино. Об этом свидетельствует дизайн сайта)
         </section>
 
-        <section class="roulette flex justify-center">
+        <section class="roulette flex justify-center my-4">
             <canvas id="roulette" width="500" height="500">В вашем браузере запрещено играть в рулетку!</canvas>
         </section>
     </div>
 
     <script>
         // Настройки
-        let wheelSize = 500;
+        let wheelSize = 480;
         let arcCount = 12;
         let arc = 2 * Math.PI /  arcCount; // 2PI - единичная окр. Находим длину одной дуги сектора в радианах
 
@@ -54,20 +54,22 @@
             ctx.strokeStyle = "black";
             ctx.lineWidth = 2;
 
-            ctx.font = 'bold 18px Helvetica, Arial';
+            ctx.font = 'bold 20px Helvetica, Arial';
         
             for(let i = 0; i < arcCount; i++) {
                 let angle = i * arc; // Находим угол в радианах, на который нужно сдвинуть следующий сектор
                 ctx.fillStyle = colors[i]; // Выбираем цвет сектора
                 
+                // ОТРИСОВЫВАЕМ СЕКТОР
                 ctx.beginPath();
-                ctx.arc(w/2, h/2, 200, angle, angle + arc, false);
+                ctx.arc(w/2, h/2, wheelSize/2, angle, angle + arc, false);
                 ctx.lineTo(w/2, h/2);
                 ctx.stroke();
                 ctx.fill();
 
-                ctx.save();
+                ctx.save(); // Сохраняем текущие состояния, настройки ctx
 
+                // ОТРИСОВЫВАЕМ ТЕКСТ
                 ctx.shadowOffsetX = -1;
                 ctx.shadowOffsetY = -1;
                 ctx.shadowBlur    = 0;
@@ -75,19 +77,20 @@
                 ctx.fillStyle = "black";
 
                 ctx.translate(w/2, h/2); // Перемещаем центр координат в центр окружности
-
                 ctx.rotate(angle + arc/2); // Поворачиваем холст на угол, под которые наклонён сектр
                 let text = prizes[i]; // Выбираем текст сектора
                 ctx.textAlign = "right"; // Выравниваем текст по правому краю, чтобы отрисовывать его, начиная с края окружности
-                ctx.fillText(text, wheelSize/2 -80, 9); // Отрисовываем текст с отступом от края окружности
+                ctx.fillText(text, wheelSize/2 -30, 9); // Отрисовываем текст с отступом от края окружности
 
-                // ctx.translate(250 + Math.cos(angle + arc / 2) * 160,
-                //                 250 + Math.sin(angle + arc / 2) * 160);
-                //                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                // let text = prizes[i];
-                // ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
-                ctx.restore();
+                ctx.restore(); // Восстанавливаем ctx состояние для сектора
             }
+
+            ctx.beginPath();
+            ctx.fillStyle = "red";
+            ctx.moveTo(w - 24, h/2);
+            ctx.lineTo(w, h/2 - 12);
+            ctx.lineTo(w, h/2 + 12);
+            ctx.fill();
         }
 
         window.addEventListener('load', () => {
