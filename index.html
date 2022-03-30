@@ -15,20 +15,18 @@
             Наша рулетка - самое белое казино. Об этом свидетельствует дизайн сайта)
         </section>
 
-        <section class="roulette flex justify-center my-4">
-            <canvas id="roulette" width="500" height="500">В вашем браузере запрещено играть в рулетку!</canvas>
+        <section class="roulette flex justify-center items-center my-4" width="500" height="500">
+            <button
+                id="spin-btn"
+                class="
+                    absolute z-10 bg-slate-100 w-20 h-20 rounded-full
+                    text-3xl text-center flex items-center justify-center
+            ">&#8635;</button>
+            <canvas id="roulette" width="500" height="500" class="">В вашем браузере запрещено играть в рулетку!</canvas>
         </section>
     </div>
 
     <script>
-        // Настройки
-        let wheelSize = 480;
-        let arcCount = 12;
-        let arc = 2 * Math.PI /  arcCount; // 2PI - единичная окр. Находим длину одной дуги сектора в радианах
-
-        let w;
-        let h;
-        let ctx;
 
         const colors = [
             "#B8D430", "#3AB745", "#029990", "#3501CB",
@@ -42,8 +40,16 @@
             "Panera", "Just Crepes", "Arby's", "Indian"
         ];
 
+        // Настройки
+        let wheelSize = 480;
+        let prizesCount = prizes.length;
+        let arc = 2 * Math.PI / prizesCount; // 2PI - единичная окр. Находим длину одной дуги сектора в радианах
+
+        let canvas, w, h, ctx;
+
+      
+
         const drawRouletteWheel = () => {
-            const canvas = document.querySelector('#roulette');
             h = canvas.height;
             w = canvas.width;
             ctx = canvas.getContext('2d');
@@ -56,7 +62,7 @@
 
             ctx.font = 'bold 20px Helvetica, Arial';
         
-            for(let i = 0; i < arcCount; i++) {
+            for(let i = 0; i < prizesCount; i++) {
                 let angle = i * arc; // Находим угол в радианах, на который нужно сдвинуть следующий сектор
                 ctx.fillStyle = colors[i]; // Выбираем цвет сектора
                 
@@ -93,8 +99,40 @@
             ctx.fill();
         }
 
+        
+        function rand(min, max) { // min and max included 
+            return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+
+        function toRad(deg){
+            return deg * (Math.PI/180);
+        }
+
+        let currentDeg = 0;
+        const rotate = () => {
+            let spinDeg = rand(2802, 7198);
+            currentDeg += spinDeg;
+            // let time = Math.round(rand(7,11));
+            let time = Math.round(rand(2,3));
+            canvas.style.transition = `all ${time}s cubic-bezier(.09,.16,.3,1.06)`;
+            canvas.style.transform  = 'rotate('+currentDeg+'deg)'; 
+
+            setTimeout(() => {
+                const rad = toRad(currentDeg);
+                console.log(currentDeg, rad);
+
+
+            }, time*1000);
+        }
+
         window.addEventListener('load', () => {
-            drawRouletteWheel();
+            canvas = document.querySelector('#roulette');
+            drawRouletteWheel(); // Рисуем колесо
+
+            const spinBtn = document.querySelector('#spin-btn');
+            spinBtn.addEventListener('click', () => {
+                rotate();
+            });
         });
     </script>
 </body>
